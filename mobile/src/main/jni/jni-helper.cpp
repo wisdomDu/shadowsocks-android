@@ -31,6 +31,11 @@ static int sdk_version() {
     return atoi(version);
 }
 
+jint Java_com_github_shadowsocks_jnihelper_sigkill(JNIEnv *env, jobject thiz, jint pid) {
+    // Suppress "No such process" errors. We just want the process killed. It's fine if it's already killed.
+    return kill(pid, SIGKILL) == -1 && errno != ESRCH ? errno : 0;
+}
+
 jint Java_com_github_shadowsocks_jnihelper_sigterm(JNIEnv *env, jobject thiz, jobject process) {
     if (!env->IsInstanceOf(process, ProcessImpl)) {
         THROW(env, "java/lang/ClassCastException",
